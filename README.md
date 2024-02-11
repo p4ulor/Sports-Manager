@@ -22,7 +22,7 @@ More info [in report.md](./docs/report.md)
 Check that the .jar outputed by spring boot has the same name as the name indicated in the `Dockerfile` and in `RUN BAT.jar`
 
 ## Trivia
-- This was a fundamental project in my programming learning journey, which skyrocketed my skill-set, regarding how to make API's, make good use of Kotlin, how to interact with databases, how to use gradle and docker
+- This was a fundamental project in my programming learning journey, which was the start of skyrocket of my skill-set and motivation, taught me about creating API's, make good use of Kotlin, how to interact with databases, how to use gradle and docker
 - It also thought me on how to think like a programmer, regarding the organisation, optimization and documentation of code.
 - Not one of my greatest projects to showcase, but it is what is is. Currently not interested in refinining it
 
