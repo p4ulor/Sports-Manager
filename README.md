@@ -3,7 +3,12 @@
 - The back-end is good
 - The front-end is kinda scuffed and the UI is raw-simple.
 
+# Preview
+
+https://github.com/p4ulor/Sports-Manager/assets/32241574/b98dac19-6653-4752-ade6-bfa01610fa52
+
 # Tech stack
+More info [in report.md](./docs/report.md)
 ## Back-end
 - It uses [http4k](https://github.com/http4k/http4k) as the toolkit to build the HTTP API
 - The back-end doesn't create the Posgresql database, so you have to create it before running the server and then create the tables in the DB
