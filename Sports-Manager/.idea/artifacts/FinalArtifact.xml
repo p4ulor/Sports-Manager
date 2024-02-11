@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact name="FinalArtifact">
+    <output-path>$PROJECT_DIR$/out/artifacts/FinalArtifact</output-path>
+    <root id="root">
+      <element id="directory" name="static-content">
+        <element id="dir-copy" path="$PROJECT_DIR$/static-content" />
+      </element>
+      <element id="artifact" artifact-name="2122-2-LEIC41N-G01_LS.main:jar" />
+    </root>
+  </artifact>
+</component>
