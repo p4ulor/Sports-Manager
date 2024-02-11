@@ -3,7 +3,7 @@
 - The back-end is good
 - The front-end is kinda scuffed and the UI is raw-simple.
 
-# Preview
+# Small demo
 
 https://github.com/p4ulor/Sports-Manager/assets/32241574/b98dac19-6653-4752-ade6-bfa01610fa52
 
