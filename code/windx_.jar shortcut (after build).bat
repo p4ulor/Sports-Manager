@@ -1,0 +1,1 @@
+start \out\artifacts

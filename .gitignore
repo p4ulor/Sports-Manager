@@ -1,8 +1,8 @@
-Sports-Manager/.gradle
-Sports-Manager/.idea
-!Sports-Manager/.idea/artifacts/
-Sports-Manager/build/
-Sports-Manager/out
+code/.gradle
+code/.idea
+!code/.idea/artifacts/
+code/build/
+code/out
 
 # Ignore Gradle GUI config
 gradle-app.setting
