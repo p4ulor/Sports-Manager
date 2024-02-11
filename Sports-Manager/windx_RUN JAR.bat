@@ -1,0 +1,1 @@
+java -jar build/libs/2122-2-LEIC41N-G01.jar

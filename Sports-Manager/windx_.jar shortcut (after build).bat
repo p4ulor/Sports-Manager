@@ -1,0 +1,1 @@
+start Sports-Manager\out\artifacts

@@ -1,0 +1,1335 @@
+openapi: 3.0.1
+info:
+  title: Sports API
+  description: 'Manage sport activity'
+  termsOfService: http://swagger.io/terms/
+  version: 4.0.0
+tags:
+  - name: Users
+    description: User Management.
+  - name: Routes
+    description: Route Managements.
+  - name: Sports
+    description: Sport Management.
+  - name: Activities
+    description: Activity Management
+
+paths:
+  /users:
+    get:
+      tags:
+        - Users
+      summary: Lists users
+      description: List users, with partial information. Can receive Sport id and Route id for the purpose of filtering users by activities with those parameters. The filtered user list is sorted by activity duration. Both parameters are not required for a response but it should be noted that both need to be sent in order to filter the list.
+      parameters:
+        - name: limit
+          in: query
+          description: Limits the number of Users returned. By default when there is no limit on the request the number of entries is 20. Limit can't be more than 200.
+          required: false
+          schema:
+            type: integer
+        - name: skip
+          in: query
+          description: Skips a specified number of User entries
+          required: false
+          schema:
+            type: integer
+        - name: sid
+          in: query
+          description: Sport id for filtering by activity
+          required: false
+          schema:
+            type: integer
+        - name: rid
+          in: query
+          description: Route id for filtering by activity
+          required: false
+          schema:
+            type: integer
+      responses:
+        200:
+          description: the list of users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsersListResponse'
+        400:
+          description: Request didn't follow guidelines
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        404:
+          description: Sport/Route not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+
+    post:
+      tags:
+        - Users
+      summary: Adds a new user to the list
+      requestBody:
+        description: New User information
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreateRequest'
+      responses:
+        201:
+          description: The user was added to the list with success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAddedResponse'
+        400:
+          description: Request didn't follow guidelines (e.g. email is not unique)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+
+  /users/{uid}:
+    get:
+      tags:
+        - Users
+      summary: Returns user details
+      description: Returns a single user
+      parameters:
+        - name: uid
+          in: path
+          description: the user's id
+          required: true
+          schema:
+            type: integer
+          example: 4
+      responses:
+        200:
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        400:
+          description: Request didn't follow guidelines (e.g. wrong type)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        404:
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+
+  /routes:
+    get:
+      tags:
+        - Routes
+      summary: Lists all routes
+      description: List all routes, with partial information
+      parameters:
+        - name: limit
+          in: query
+          description: Limits the number of Routes returned. By default when there is no limit on the request the number of entries is 20. Limit can't be more than 200.
+          required: false
+          schema:
+            type: integer
+        - name: skip
+          in: query
+          description: Skips a specified number of Route entries
+          required: false
+          schema:
+            type: integer
+        - name: startLocation
+          in: query
+          description: Filters list by this start location
+          required: false
+          schema:
+            type: string
+        - name: endLocation
+          in: query
+          description: Filters list by this end location
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: the list of routes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoutesListResponse'
+        400:
+          description: Request didn't follow guidelines
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+
+    post:
+      tags:
+        - Routes
+      summary: Adds a new route to the list
+      security:
+        - userAuth: []
+      requestBody:
+        description: New Route information
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoutesCreateRequest'
+      responses:
+        201:
+          description: The route was added to the list with success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RouteAddedResponse'
+        400:
+          description: Request didn't follow guidelines
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        401:
+          description: Authentication error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+                
+  /login:
+    post:
+      tags:
+        - Users
+      summary: Returns user token
+      description: Uses authentication credentials to get the user's token
+      requestBody:
+        description: User credentials
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLoginRequest'
+      responses:
+        200:
+          description: User token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLoginResponse'
+        400:
+          description: Request didn't follow guidelines
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        401:
+          description: Password error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        404:
+          description: Email not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+
+
+  /routes/{rid}:
+    get:
+      tags:
+        - Routes
+      summary: Returns route details
+      description: Returns a single route
+      parameters:
+        - name: rid
+          in: path
+          description: the route id
+          required: true
+          schema:
+            type: integer
+          example: 27
+      responses:
+        200:
+          description: Route found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RouteResponse'
+        400:
+          description: Request didn't follow guidelines
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        404:
+          description: Route not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+    put:
+      tags:
+        - Routes
+      summary: Updates route
+      security:
+        - userAuth: []
+      description: Updates a single route
+      parameters:
+        - name: rid
+          in: path
+          description: the route id
+          required: true
+          schema:
+            type: integer
+          example: 27
+      requestBody:
+        description: Route Update information
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RouteUpdateRequest'
+      responses:
+        200:
+          description: Route updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RouteResponse'
+        400:
+          description: Request didn't follow guidelines
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        401:
+          description: Authentication error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        403:
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        404:
+          description: Route not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+
+  /sports:
+    get:
+      tags:
+        - Sports
+      summary: Lists all sports
+      description: List all sports, with partial information
+      parameters:
+        - name: limit
+          in: query
+          description: Limits the number of Sports returned. By default when there is no limit on the request the number of entries is 20. Limit can't be more than 200.
+          required: false
+          schema:
+            type: integer
+        - name: skip
+          in: query
+          description: Skips a specified number of Sport entries
+          required: false
+          schema:
+            type: integer
+        - name: name
+          in: query
+          description: Filter sports by name
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: the list of sports
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SportsListResponse'
+        400:
+          description: Request didn't follow guidelines
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+
+    post:
+      tags:
+        - Sports
+      summary: Adds a new sport to the list
+      security:
+        - userAuth: []
+      requestBody:
+        description: New Sport information
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SportsCreateRequest'
+      responses:
+        201:
+          description: The sport was added to the list with success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SportAddedResponse'
+        400:
+          description: Request didn't follow guidelines
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        401:
+          description: Authentication error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+
+  /sports/{sid}:
+    get:
+      tags:
+        - Sports
+      summary: Returns sport details
+      description: Returns a single sport
+      parameters:
+        - name: sid
+          in: path
+          description: the sport's id
+          required: true
+          schema:
+            type: integer
+          example: 2
+      responses:
+        200:
+          description: Sport found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SportResponse'
+        400:
+          description: Request didn't follow guidelines
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        404:
+          description: Sport not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+    put:
+      tags:
+        - Sports
+      summary: Updates Sport
+      security:
+        - userAuth: []
+      description: Updates a single sport
+      parameters:
+        - name: sid
+          in: path
+          description: the sport's id
+          required: true
+          schema:
+            type: integer
+          example: 2
+      requestBody:
+        description: Sport Update information
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SportUpdateRequest'
+      responses:
+        200:
+          description: Sport updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SportResponse'
+        400:
+          description: Request didn't follow guidelines
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        401:
+          description: Authentication error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        403:
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        404:
+          description: Sport not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+
+  /sports/{sid}/activities:
+    get:
+      tags:
+        - Activities
+      summary: Lists activities of a sport
+      description: List activities of a sport, with partial information
+      parameters:
+        - name: limit
+          in: query
+          description: Limits the number of Activities returned. By default when there is no limit on the request the number of entries is 20. Limit can't be more than 200.
+          required: false
+          schema:
+            type: integer
+        - name: skip
+          in: query
+          description: Skips a specified number of Activity entries
+          required: false
+          schema:
+            type: integer
+        - name: sid
+          in: path
+          description: the sport's id
+          required: true
+          schema:
+            type: integer
+          example: 2
+      responses:
+        200:
+          description: the list of activities
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivitiesListResponse'
+        400:
+          description: Request didn't follow guidelines
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        404:
+          description: Sport not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+
+    post:
+      tags:
+        - Activities
+      summary: Adds a new activity for the sport
+      security:
+        - userAuth: []
+      parameters:
+        - name: sid
+          in: path
+          description: the activity's id
+          required: true
+          schema:
+            type: integer
+          example: 2
+      requestBody:
+        description: New Activity information
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActivityCreateRequest'
+      responses:
+        201:
+          description: The activity was added to the list with success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityAddedResponse'
+        400:
+          description: Request didn't follow guidelines
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        401:
+          description: Authentication error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        404:
+          description: Sport not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+
+  /users/{uid}/activities:
+    get:
+      tags:
+        - Activities
+      summary: Lists activities of a user
+      description: List activities of a user, with partial information
+      parameters:
+        - name: limit
+          in: query
+          description: Limits the number of Activities returned. By default when there is no limit on the request the number of entries is 20. Limit can't be more than 200.
+          required: false
+          schema:
+            type: integer
+        - name: skip
+          in: query
+          description: Skips a specified number of Activity entries
+          required: false
+          schema:
+            type: integer
+        - name: uid
+          in: path
+          description: the user's id
+          required: true
+          schema:
+            type: integer
+          example: 2
+      responses:
+        200:
+          description: the list of activities
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivitiesListResponse'
+        400:
+          description: Request didn't follow guidelines
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        404:
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+
+  /activities:
+    get:
+      tags:
+        - Activities
+      summary: Lists activities
+      description: Lists activities, according to the query specifications
+      parameters:
+        - name: limit
+          in: query
+          description: Limits the number of Activities returned. By default when there is no limit on the request the number of entries is 20. Limit can't be more than 200.
+          required: false
+          schema:
+            type: integer
+        - name: skip
+          in: query
+          description: Skips a specified number of Activity entries
+          required: false
+          schema:
+            type: integer
+        - name: sid
+          in: query
+          description: the sport's id
+          example: 1
+          required: true
+          schema:
+            type: integer
+        - name: orderBy
+          in: query
+          description: Activity parameter used to order the list
+          example: Orders in ASC (ascending) or DESC(descending) the duration
+          required: true
+          schema:
+            type: string
+        - name: date
+          in: query
+          description: activity date in the format yyyy-mm-dd
+          example: "2010-03-05"
+          required: false
+          schema:
+            type: string
+        - name: rid
+          in: query
+          description: the route's id
+          example: 27
+          required: false
+          schema:
+            type: integer
+      responses:
+        200:
+          description: the list of sports
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivitiesListResponse'
+        400:
+          description: Request didn't follow guidelines
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        404:
+          description: Sport or Route not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+    post:
+      tags:
+        - Activities
+      summary: Deletes a list of activities
+      description: Deletes all actvities that come in the activity id list
+      security:
+        - userAuth: []
+      requestBody:
+        description: List with activity ids
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActivitiesListRequest'
+      responses:
+        200:
+          description: Deleted Activities
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivitiesListResponse'
+        400:
+          description: Request didn't follow guidelines
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        404:
+          description: Activity not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+
+  /activities/{aid}:
+    get:
+      tags:
+        - Activities
+      summary: Returns activity details
+      description: Returns a single activity
+      parameters:
+        - name: aid
+          in: path
+          description: the activity's id
+          required: true
+          schema:
+            type: integer
+          example: 11
+      responses:
+        200:
+          description: Activity found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityResponse'
+        400:
+          description: Request didn't follow guidelines
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        404:
+          description: Activity not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+
+    delete:
+      tags:
+        - Activities
+      summary: Deletes the activity
+      description: Deletes a target activity
+      security:
+        - userAuth: []
+      parameters:
+        - name: aid
+          in: path
+          description: the activity's id
+          required: true
+          schema:
+            type: integer
+          example: 11
+      responses:
+        200:
+          description: Deleted Activity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityResponse'
+        400:
+          description: Request didn't follow guidelines
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        404:
+          description: Activity not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+                
+    put:
+      tags:
+        - Activities
+      summary: Updates activity
+      security:
+        - userAuth: []
+      description: Updates a single activity
+      parameters:
+        - name: aid
+          in: path
+          description: the activity's id
+          required: true
+          schema:
+            type: integer
+          example: 27
+      requestBody:
+        description: Activty Update information
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActivityUpdateRequest'
+      responses:
+        200:
+          description: Activty updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RouteResponse'
+        400:
+          description: Request didn't follow guidelines
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        401:
+          description: Authentication error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        403:
+          description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+        404:
+          description: Activty not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppError'
+
+
+components:
+  securitySchemes:
+    userAuth:
+      type: http
+      scheme: bearer
+
+  schemas:
+    AppError:
+      type: object
+      description: Application error
+      required:
+        - code
+        - name
+        - message
+      properties:
+        code:
+          type: number
+          format: integer
+          description: HTTP Error code
+          example: 4**
+        name:
+          type: string
+          description: HTTP Error name
+          example: Client Error name
+        message:
+          type: string
+          description: Error description message
+          example: An error occurred
+
+    UserCreateRequest:
+      type: object
+      description: Information for new user creation
+      required:
+        - name
+        - email
+        - password
+      properties:
+        name:
+          type: string
+          description: the user's name
+          example: Filipe
+        email:
+          type: string
+          description: the user's unique email
+          example: filipea42@gmail.com
+        password:
+          type: string
+          description: the user's password
+          example: fitN3zs
+          
+    UserAddedResponse:
+      type: object
+      description: User successfully added to list
+      required:
+        - uuid
+        - uid
+      properties:
+        uuid:
+          type: string
+          description: the user's authentication token
+          example: YWxhZGRpbjpvcGVuc2VzYW1l
+        uid:
+          type: integer
+          description: the user's id
+          example: 7
+
+    UserResponse:
+      type: object
+      description: Response with a user
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+
+    UsersListResponse:
+      type: object
+      description: Response with a list of users
+      properties:
+        users:
+          type: array
+          items:
+            type: object
+            description: Partial user information
+            required:
+              - uid
+              - name
+            properties:
+              uid:
+                type: integer
+                description: the user's id
+                example: 7
+              name:
+                type: string
+                description: the user's name
+                example: Filipe
+                
+    UserLoginRequest:
+      type: object
+      description: Information for user authentication
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          description: the user's unique email
+          example: filipea42@gmail.com
+        password:
+          type: string
+          description: the user's password
+          example: fitN3zs
+    
+    UserLoginResponse:
+      type: object
+      description: User's token
+      required:
+        - uuid
+      properties:
+        uid:
+          type: integer
+          description: the user's id
+          example: 7
+          
+    User:
+      type: object
+      description: User data
+      required:
+        - uid
+        - name
+        - email
+      properties:
+        uid:
+          type: integer
+          description: the user's id
+          example: 7
+        name:
+          type: string
+          description: the user's name
+          example: Filipe
+        email:
+          type: string
+          description: the user's unique email
+          example: filipea42@gmail.com
+
+    RouteAddedResponse:
+      type: object
+      description: Route successfully added to list
+      required:
+        - rid
+      properties:
+        rid:
+          type: integer
+          description: the route id
+          example: 27
+
+    RouteResponse:
+      type: object
+      description: Response with a route
+      properties:
+        route:
+          $ref: '#/components/schemas/Route'
+
+    RoutesListResponse:
+      type: object
+      description: Response with a list of routes
+      properties:
+        routes:
+          type: array
+          items:
+            type: object
+            description: Partial route information
+            required:
+              - rid
+              - startLocation
+              - endLocation
+            properties:
+              rid:
+                type: integer
+                description: the route id
+                example: 27
+              startLocation:
+                type: string
+                description: the route start location name
+                example: Pragal
+              endLocation:
+                type: string
+                description: the route end location name
+                example: Cacilhas
+
+    RoutesCreateRequest:
+      type: object
+      description: Information for new route creation
+      required:
+        - startLocation
+        - endLocation
+        - distance
+      properties:
+        startLocation:
+          type: string
+          description: the route start location name
+          example: Pragal
+        endLocation:
+          type: string
+          description: the route end location name
+          example: Cacilhas
+        distance:
+          type: number
+          format: float
+          description: the route distance in km
+          example: 15.2
+          
+    RouteUpdateRequest:
+      type: object
+      description: Information for route update
+      properties:
+        endLocation:
+          type: string
+          description: the route end location name
+          example: Cacilhas
+        distance:
+          type: number
+          format: float
+          description: the route distance in km
+          example: 15.2
+
+    Route:
+      type: object
+      description: Route Info
+      required:
+        - rid
+        - startLocation
+        - endLocation
+        - distance
+        - uid
+      properties:
+        rid:
+          type: integer
+          description: the route id
+          example: 23
+        startLocation:
+          type: string
+          description: the route start location name
+          example: Pragal
+        endLocation:
+          type: string
+          description: the route end location name
+          example: Cacilhas
+        distance:
+          type: number
+          format: float
+          description: the route distance in km
+          example: 15.2
+        uid:
+          type: integer
+          description: the user that created the route
+          example: 7
+
+    SportAddedResponse:
+      type: object
+      description: Sport successfully added to list
+      required:
+        - sid
+      properties:
+        sid:
+          type: integer
+          description: the sport's id
+          example: 1
+
+    SportResponse:
+      type: object
+      description: Response with a sport
+      properties:
+        sport:
+          $ref: '#/components/schemas/Sport'
+
+    SportsListResponse:
+      type: object
+      description: Response with a list of sports
+      properties:
+        sports:
+          type: array
+          items:
+            type: object
+            description: Partial sport information
+            required:
+              - sid
+              - name
+            properties:
+              sid:
+                type: integer
+                description: the sport's id
+                example: 1
+              name:
+                type: string
+                description: the sport's name
+                example: Football
+
+    SportsCreateRequest:
+      type: object
+      description: Information for new sport creation
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: the sport's name
+          example: Football
+        description:
+          type: string
+          description: the sport's description
+          example: "Players kick balls to score goals"
+    
+    SportUpdateRequest:
+      type: object
+      description: Information for sport update
+      properties:
+        description:
+          type: string
+          description: the sport's description
+          example: "Players kick balls to score goals"
+
+    Sport:
+      type: object
+      description: Sport Info
+      required:
+        - sid
+        - name
+        - uid
+      properties:
+        sid:
+          type: integer
+          description: the sport's id
+          example: 1
+        name:
+          type: string
+          description: the sport's name
+          example: Football
+        description:
+          type: string
+          description: the sport's description
+          example: "Players kick balls to score goals"
+        uid:
+          type: integer
+          description: the user that created the sport
+          example: 7
+
+    ActivityAddedResponse:
+      type: object
+      description: Activity successfully added to list
+      required:
+        - aid
+      properties:
+        aid:
+          type: integer
+          description: the activity's id
+          example: 33
+
+    ActivityResponse:
+      type: object
+      description: Response with an Activity
+      properties:
+        activity:
+          $ref: '#/components/schemas/Activity'
+
+    ActivitiesListResponse:
+      type: object
+      description: Response with a list of activity
+      properties:
+        activities:
+          type: array
+          items:
+            type: object
+            description: Partial activity information
+            required:
+              - aid
+              - date
+              - uid
+              - sid
+            properties:
+              aid:
+                type: integer
+                description: the activity's id
+                example: 33
+              date:
+                type: string
+                description: activity date in the format yyyy-mm-dd
+                example: "2010-03-05"
+              uid:
+                type: integer
+                description: the user's id
+                example: 1
+              sid:
+                type: integer
+                description: the sport's id
+                example: 1
+
+    ActivitiesListRequest:
+      type: object
+      description: Request with a list of activity ids
+      properties:
+        activities:
+          type: array
+          items:
+            type: object
+            description: Activity id
+            required:
+              - aid
+            properties:
+              aid:
+                type: integer
+                description: the activity's id
+                example: 33
+
+
+    ActivityCreateRequest:
+      type: object
+      description: Information for new activity creation
+      required:
+        - date
+        - duration
+      properties:
+        date:
+          type: string
+          description: activity date in the format yyyy-mm-dd
+          example: "2010-03-05"
+        duration:
+          type: string
+          description: duration time in the format hh:mm:ss.fff
+          example: "08:30:00.000"
+        rid:
+          type: integer
+          description: the route id
+          example: 23
+
+    ActivityUpdateRequest:
+      type: object
+      description: Information for activity update
+      properties:
+        date:
+          type: string
+          description: activity date in the format yyyy-mm-dd
+          example: "2010-03-05"
+        duration:
+          type: string
+          description: duration time in the format hh:mm:ss.fff
+          example: "08:30:00.000"
+          
+    Activity:
+      type: object
+      description: Activity Info
+      required:
+        - aid
+        - date
+        - duration
+        - uid
+        - sid
+      properties:
+        aid:
+          type: integer
+          description: the activity's id
+          example: 33
+        date:
+          type: string
+          description: activity date in the format yyyy-mm-dd
+          example: "2010-03-05"
+        duration:
+          type: string
+          description: duration time in the format hh:mm:ss.fff
+          example: "08:30:00.000"
+        uid:
+          type: integer
+          description: the user's id
+          example: 7
+        sid:
+          type: integer
+          description: the sport's id
+          example: 1
+        rid:
+          type: integer
+          description: the route id
+          example: 23
+          

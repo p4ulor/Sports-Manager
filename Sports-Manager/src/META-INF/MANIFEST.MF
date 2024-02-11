@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Main-Class: pt.isel.ls.api.Sports_serverKt
+Class-Path: pt.isel.ls.api.Sports_serverKt
+

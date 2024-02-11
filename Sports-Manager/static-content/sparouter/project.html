@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style> 
+            @font-face {
+            font-family: myFirstFont;
+            src:url("../light-spotify.ttf") format('truetype');
+            
+            }
+
+            /* The * indicates that all element will have this font */
+            * { 
+                font-family: myFirstFont;
+                font-size:large
+            }
+
+            button {
+            background-color: #b4b4b4;
+            border: none;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            text-decoration:underline;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 6px;
+            }
+
+            button:hover {background-color: #29d407; transition-duration:1s}
+            table { border-collapse: collapse; }
+            tr { text-align: center;}
+        </style>
+        <title>Users</title>
+        <meta charset="utf-8">
+        <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"> -->
+        <script src="./index.js" type="module"></script> <!-- run this script on every load-->
+    </head>
+    <body>
+        <a href="/">Root</a>
+        <a href="#home" class="link-secondary"> Home </a>
+        <a href="#users" class="link-primary"> Users </a>
+        <a href="#sports" class="link-primary"> Sports </a>
+        <a href="#routes" class="link-primary"> Routes </a>
+        <a href="#activities" class="link-primary"> Activities </a>
+        <a id=login href="#login" style="float:right;text-align:right;margin-left: 80px;margin-right: 10px;"> Login </a>
+        
+        <br>
+        <div id="mainContent"> </div>
+
+        <script>
+            if(sessionStorage.getItem("token")!=null){
+                const loginLink = document.getElementById("login")
+                loginLink.text = "Logout"
+                
+            }
+        </script>
+    </body>
+</html>
