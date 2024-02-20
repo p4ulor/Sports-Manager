@@ -11,7 +11,7 @@ https://github.com/p4ulor/Sports-Manager/assets/32241574/b98dac19-6653-4752-ade6
 More info [in report.md](./docs/report.md)
 ## Back-end
 - It uses [http4k](https://github.com/http4k/http4k) as the toolkit to build the HTTP API
-- The back-end doesn't create the Posgresql database, so you have to create it before running the server and then create the tables in the DB
+- The back-end doesn't create the Posgresql database, so you have to create it (using a DB management application like pgAdmin or Dbeaver per example) before running the server
 - Manual dependency injection is performed
 
 ## Front-end
